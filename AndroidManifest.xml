@@ -30,6 +30,10 @@
             android:name="tw.singtracy.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
+        <activity
+            android:name="tw.singtracy.RegisterActivity"
+            android:label="@string/title_activity_register" >
+        </activity>
     </application>
 
 </manifest>
