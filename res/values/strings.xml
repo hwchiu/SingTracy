@@ -7,4 +7,5 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_listSong">Song list</string>
     <string name="title_activity_register">RegisterActivity</string>
-</resources>
+    <string name="title_activity_audio">AudioActivity</string>
+    <string name="action_settings">Settings</string></resources>

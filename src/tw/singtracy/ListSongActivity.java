@@ -1,13 +1,16 @@
 package tw.singtracy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import tw.singtracy.utils.PlayList;
+import tw.singtracy.utils.Song;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -37,25 +40,40 @@ public class ListSongActivity extends Activity {
 	}
 
 	private void grabFromKii() {
-		adapter.add(new Song("test", "this is the 1 song"));
-		adapter.add(new Song("test1", "this is the 2 song"));
-		adapter.add(new Song("test2", "this is the 3 song"));
-		adapter.add(new Song("test3", "this is the 4 song"));
-		KiiQuery all_query = new KiiQuery();
-
-		try {
-		  KiiQueryResult<KiiObject> result = Kii.bucket("Songs")
-		          .query(all_query);
-		  List<KiiObject> objLists = result.getResult();
-		  for (KiiObject obj : objLists) {
-			  Log.d(TAG, obj.toString());
-		  }
-		} catch (IOException e) {
-		  // handle error
-		} catch (AppException e) {
-		  // handle error
-		}
-		adapter.notifyDataSetChanged();
+		new AsyncTask<Void, Void, ArrayList<Song>>() {
+			private ProgressDialog dialog;
+			
+			protected void onPreExecute() {
+				dialog = new ProgressDialog(ListSongActivity.this);
+				dialog.setMessage("Please wait...");
+				dialog.show();
+			}
+			
+			@Override
+			protected ArrayList<Song> doInBackground(Void... params) {
+				KiiQuery all_query = new KiiQuery();
+				ArrayList<Song> songs = new ArrayList<Song>();
+				try {
+					  KiiQueryResult<KiiObject> result = Kii.bucket("Songs")
+					          .query(all_query);
+					  List<KiiObject> objLists = result.getResult();
+					  for (KiiObject obj : objLists) {
+						  songs.add(new Song(obj.toUri().toString(), obj.getString("name")));
+					  }
+				} catch (IOException e) {
+				  // handle error
+				} catch (AppException e) {
+				  // handle error
+				}
+				return songs;
+			}
+			
+			protected void onPostExecute(ArrayList<Song> result) {
+				dialog.dismiss();
+				adapter.addAll(result);
+			}
+		}.execute();
+		
 	}
 	
 	private void findViews () {
