@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tw.singtracy.utils.PlayList;
+import tw.singtracy.utils.Song;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;

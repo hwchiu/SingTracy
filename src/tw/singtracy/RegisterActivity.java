@@ -2,23 +2,22 @@ package tw.singtracy;
 
 import java.io.IOException;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
+
 import com.kii.cloud.storage.KiiUser;
-import com.kii.cloud.storage.KiiUser.Builder;
 import com.kii.cloud.storage.exception.app.BadRequestException;
 import com.kii.cloud.storage.exception.app.ConflictException;
 import com.kii.cloud.storage.exception.app.ForbiddenException;
 import com.kii.cloud.storage.exception.app.NotFoundException;
 import com.kii.cloud.storage.exception.app.UnauthorizedException;
 import com.kii.cloud.storage.exception.app.UndefinedException;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.view.Menu;
-import android.view.View;
-import android.widget.EditText;
 
 public class RegisterActivity extends Activity {
 

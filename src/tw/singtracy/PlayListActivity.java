@@ -1,6 +1,7 @@
 package tw.singtracy;
 
 import tw.singtracy.utils.PlayList;
+import tw.singtracy.utils.Song;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
