@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +30,8 @@ public class MainActivity extends Activity implements Observer {
 	private static final int RESULTCODE_ACCESS_TOKEN = 1;
 	private SharedPreferences pref;
 	private String token;
+	private MediaPlayer mp = new MediaPlayer();
+	private boolean muted = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,22 @@ public class MainActivity extends Activity implements Observer {
 			Log.v(TAG, "Use token: " + token);
 
 		setContentView(R.layout.activity_main);
+		((SurfaceView)findViewById(R.id.playback_surface)).getHolder().addCallback(new SurfaceHolder.Callback() {
+			
+			@Override
+			public void surfaceDestroyed(SurfaceHolder holder) {
+			}
+			
+			@Override
+			public void surfaceCreated(SurfaceHolder holder) {
+				mp.setDisplay(holder);
+			}
+			
+			@Override
+			public void surfaceChanged(SurfaceHolder holder, int format, int width,
+					int height) {
+			}
+		});
 		
 		findViewById(R.id.btn_songs).setOnClickListener(new OnClickListener() {
 			@Override
@@ -56,11 +75,14 @@ public class MainActivity extends Activity implements Observer {
 			}
 		});
 		
-		// test video playback
+
 		findViewById(R.id.playback_surface).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				playURL("https://api-jp.kii.com/api/x/bkfkd9gkwwc4cdupfn4qkz221");
+				// mute or unmute
+				muted = !muted;
+				float vol = muted? 0f : 0.5f;
+				mp.setVolume(vol, vol);
 			}
 		});
 	}
@@ -68,6 +90,7 @@ public class MainActivity extends Activity implements Observer {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		String token = pref.getString("access_token", null);
 		if (token != null) {
@@ -112,8 +135,7 @@ public class MainActivity extends Activity implements Observer {
 	}
 	
 	public void playURL(String url){
-		MediaPlayer mp = new MediaPlayer();
-		mp.setDisplay(((SurfaceView)findViewById(R.id.playback_surface)).getHolder());
+
 		try {
 			mp.setDataSource(url);
 			mp.setOnPreparedListener(new OnPreparedListener() {
@@ -175,6 +197,8 @@ public class MainActivity extends Activity implements Observer {
 			Boolean myturn = (Boolean) isMyTurn;
 			if (myturn) {
 				Toast.makeText(getApplicationContext(), "myTurn", Toast.LENGTH_SHORT).show();
+				// Start record mode
+				playURL(((PlayList) observable).nowPlaying().url);
 			} else {
 				Toast.makeText(getApplicationContext(), "notMyTurn", Toast.LENGTH_SHORT).show();
 			}
