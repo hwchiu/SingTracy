@@ -18,8 +18,9 @@ public class MainActivity extends Activity {
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		String token = pref.getString("access_token", null);
 		
-		if(token == null)
-			startActivityForResult(new Intent(this, LoginActivity.class), RESULTCODE_ACCESS_TOKEN);
+		//if(token == null)
+			//startActivityForResult(new Intent(this, LoginActivity.class), RESULTCODE_ACCESS_TOKEN);
+		startActivity(new Intent(this, AudioActivity.class));
 		setContentView(R.layout.activity_main);
 	}
 	
