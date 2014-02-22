@@ -58,7 +58,7 @@ public class ListSongActivity extends Activity {
 					          .query(all_query);
 					  List<KiiObject> objLists = result.getResult();
 					  for (KiiObject obj : objLists) {
-						  songs.add(new Song(obj.toUri().toString(), obj.getString("name")));
+						  songs.add(new Song(obj.toUri().toString(), obj.getString("url"), obj.getString("name"), null));
 					  }
 				} catch (IOException e) {
 				  // handle error
