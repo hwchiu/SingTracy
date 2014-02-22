@@ -44,12 +44,15 @@ public class PushNotificationReceiver extends BroadcastReceiver {
 	    			if (pam.containsKiiBucket()) {
 	    				dealWithMessage(pam);
 	    				// Extract more field values.
+	    				/*
 	    				long when = extras.getLong("when");
 	    				String event_type = extras.getString("type");
+	    				*/
 	    				// ... and get more field values as needed.
 	    			}
 	    			break;
-	
+	    		default:
+	    			break;
 	    			// cases for PUSH_TO_USER and DIRECT_PUSH will follow...		
 	    	}
 		}

@@ -6,7 +6,6 @@ import java.util.Observer;
 
 import tw.singtracy.utils.GCMRegisterHelper;
 import tw.singtracy.utils.PlayList;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -14,6 +13,11 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBar.TabListener;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceHolder;
@@ -25,20 +29,20 @@ import android.widget.Toast;
 
 import com.kii.cloud.storage.KiiUser;
 
-public class MainActivity extends Activity implements Observer {
+public class MainActivity extends ActionBarActivity implements Observer,TabListener {
 	private static final String TAG = "MainActivity";
 	private static final int RESULTCODE_ACCESS_TOKEN = 1;
 	private SharedPreferences pref;
 	private String token;
 	private MediaPlayer mp = new MediaPlayer();
 	private boolean muted = false;
+	private ActionBar bar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		token = pref.getString("access_token", null);
-		
 		if(token == null)
 			startActivityForResult(new Intent(this, LoginActivity.class), RESULTCODE_ACCESS_TOKEN);
 		else
@@ -61,6 +65,21 @@ public class MainActivity extends Activity implements Observer {
 					int height) {
 			}
 		});
+		
+		bar = getSupportActionBar();
+		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	    bar.setDisplayShowTitleEnabled(true);
+	    bar.setDisplayShowHomeEnabled(true);
+	    
+	    ActionBar.Tab newTab0 = bar.newTab();
+    	newTab0.setText("Tab 0 title");
+    	newTab0.setTabListener(this);
+    	ActionBar.Tab newTab1 = bar.newTab();
+    	newTab1.setText("Tab 1 title");
+    	newTab1.setTabListener(this);
+    	
+    	bar.addTab(newTab0);
+    	bar.addTab(newTab1);    	
 		
 		findViewById(R.id.btn_songs).setOnClickListener(new OnClickListener() {
 			@Override
@@ -85,6 +104,22 @@ public class MainActivity extends Activity implements Observer {
 				mp.setVolume(vol, vol);
 			}
 		});
+	}
+	
+	
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+	            Log.d("SimpleActionBarTabsActivity","tab " 
+	                    + String.valueOf(tab.getPosition()) + " re-clicked");
+	}
+
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		Log.d("SimpleActionBarTabsActivity","tab " 
+	                   + String.valueOf(tab.getPosition()) + " clicked");
+	}
+
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	          Log.d("SimpleActionBarTabsActivity","tab " 
+	                  + String.valueOf(tab.getPosition()) + " un-clicked");
 	}
 	
 	@Override

@@ -20,7 +20,6 @@ import com.kii.cloud.storage.exception.app.ConflictException;
 public class GCMRegisterHelper {
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String TAG = "GCMRegisterHelper";
     
     GoogleCloudMessaging gcm;
