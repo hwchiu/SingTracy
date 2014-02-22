@@ -1,12 +1,14 @@
 package tw.singtracy;
 
 import java.io.IOException;
-
+import tw.singtracy.utils.GCMRegisterHelper;
+import tw.singtracy.utils.PlayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.kii.cloud.storage.KiiUser;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
@@ -25,8 +29,6 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-				
-		
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		token = pref.getString("access_token", null);
 		
@@ -58,6 +60,36 @@ public class MainActivity extends Activity {
 			}
 		});
 		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		pref = PreferenceManager.getDefaultSharedPreferences(this);
+		String token = pref.getString("access_token", null);
+		if (token != null) {
+			new LoginByTokenTask(){
+				protected void onPostExecute(Void result) {
+					PlayList.getInstance().refresh();
+					GCMRegisterHelper helper = new GCMRegisterHelper();
+					helper.initialize(getApplicationContext(), MainActivity.this);
+				}
+			}.execute();
+		}
+	}
+	
+	private class LoginByTokenTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
+			pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+			String token = pref.getString("access_token", null);
+			try {
+				KiiUser.loginWithToken(token);
+			} catch (Exception e) {
+				
+			}
+			return null;
+		}
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -117,6 +149,7 @@ public class MainActivity extends Activity {
 	
 	protected void startRecording() {
 		if(!this.isRecording) {
+
 			task = new RecordTask();
 			this.isRecording = true;
 			((Button) findViewById(R.id.record)).setText("Stop");
@@ -126,7 +159,6 @@ public class MainActivity extends Activity {
 	
 	protected void stopRecording(){
 		if(this.isRecording) {
-			this.isRecording = false;
 			((Button) findViewById(R.id.record)).setText("Record");
 			task.stop();
 			task.cancel(true);

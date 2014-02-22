@@ -15,7 +15,7 @@ public class RecordTask extends AsyncTask<Void, Void, Void> {
 	
 	@Override
 	protected Void doInBackground(Void... params) {
-		Log.e("doInBackground", "doInBackground");
+		Log.d("RecordTask", "doInBackground");
 		recorder = new MediaRecorder();
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
@@ -33,13 +33,12 @@ public class RecordTask extends AsyncTask<Void, Void, Void> {
 		}
 
 		recorder.start();
-		Log.e("doInBackground", "start");
 		return null;
 	}
 	
 	//@Override
 	protected void stop()  {
-		Log.e("stop", "stop");
+		Log.d("RecordTask", "stop");
 		try{
 			recorder.stop();
 		    recorder.release(); 
