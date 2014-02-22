@@ -1,14 +1,37 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".LoginActivity" >
 
-    <TextView
+    <EditText
+        android:id="@+id/username"
+        android:inputType="text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world" />
+        android:ems="10" >
+        <requestFocus />
+    </EditText>
+    
+	<EditText
+        android:id="@+id/password"
+        android:inputType="textPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10" >
+    </EditText>
 
-</RelativeLayout>
+	<Button android:id="@+id/login"
+	    android:text="Login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="login"
+	/>
+	
+	<Button android:onClick="register"
+	    android:text="Register"
+	    android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+	/>
+</LinearLayout>

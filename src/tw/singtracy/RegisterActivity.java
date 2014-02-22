@@ -3,6 +3,7 @@ package tw.singtracy;
 import java.io.IOException;
 
 import com.kii.cloud.storage.KiiUser;
+import com.kii.cloud.storage.KiiUser.Builder;
 import com.kii.cloud.storage.exception.app.BadRequestException;
 import com.kii.cloud.storage.exception.app.ConflictException;
 import com.kii.cloud.storage.exception.app.ForbiddenException;
@@ -19,43 +20,32 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 
-public class LoginActivity extends Activity {
+public class RegisterActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
+		setContentView(R.layout.activity_register);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_login, menu);
+		getMenuInflater().inflate(R.menu.activity_register, menu);
 		return true;
 	}
 	
-	public void login(View view){
-		String username = ((EditText) findViewById(R.id.username)).getText().toString();
-		String password = ((EditText) findViewById(R.id.password)).getText().toString();
-		(new LoginTask()).execute(username, password);
+	public void register(View v){
+		String username = ((EditText) findViewById(R.id.reg_username)).getText().toString();
+		String password = ((EditText) findViewById(R.id.reg_password)).getText().toString();
+		(new RegisterTask()).execute(username, password);
 	}
 	
-	public void register(View view){
-		startActivityForResult(new Intent(this, RegisterActivity.class), 1);
-	}
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == 1){
-			setResult(RESULT_OK, data);
-			finish();
-		}
-	}
-	
-	private class LoginTask extends AsyncTask<String, Void, String>{
+	private class RegisterTask extends AsyncTask<String, Void, String>{
 		private ProgressDialog dialog;
 		
 		protected void onPreExecute() {
-			dialog = new ProgressDialog(LoginActivity.this);
+			dialog = new ProgressDialog(RegisterActivity.this);
 			dialog.setMessage("Please wait...");
 			dialog.show();
 		}
@@ -63,7 +53,9 @@ public class LoginActivity extends Activity {
 		@Override
 		protected String doInBackground(String... params) {
 			try {
-				KiiUser user = KiiUser.logIn(params[0], params[1]);
+				KiiUser user = KiiUser.builderWithName(params[0]).build();
+				user.register(params[1]);
+				
 				return user.getAccessToken();
 			} catch (BadRequestException e) {
 				// TODO Auto-generated catch block
