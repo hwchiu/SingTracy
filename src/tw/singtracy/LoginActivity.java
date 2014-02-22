@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
@@ -53,6 +54,7 @@ public class LoginActivity extends Activity {
 	
 	private class LoginTask extends AsyncTask<String, Void, String>{
 		private ProgressDialog dialog;
+		String error;
 		
 		protected void onPreExecute() {
 			dialog = new ProgressDialog(LoginActivity.this);
@@ -66,6 +68,7 @@ public class LoginActivity extends Activity {
 				KiiUser user = KiiUser.logIn(params[0], params[1]);
 				return user.getAccessToken();
 			} catch (BadRequestException e) {
+				error = e.getMessage();
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (UnauthorizedException e) {
@@ -93,11 +96,15 @@ public class LoginActivity extends Activity {
 		protected void onPostExecute(String token){
 			dialog.dismiss();
 			
-			Intent intent = new Intent();
-			intent.putExtra("token", token);
-			
-			setResult(RESULT_OK, intent);
-			finish();
+			if(token != null){
+				Intent intent = new Intent();
+				intent.putExtra("token", token);
+				
+				setResult(RESULT_OK, intent);
+				finish();
+			}else{
+				Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 }
