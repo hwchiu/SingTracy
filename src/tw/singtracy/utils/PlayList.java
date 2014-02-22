@@ -1,6 +1,5 @@
 package tw.singtracy.utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -14,12 +13,6 @@ import com.kii.cloud.storage.Kii;
 import com.kii.cloud.storage.KiiBucket;
 import com.kii.cloud.storage.KiiObject;
 import com.kii.cloud.storage.KiiUser;
-import com.kii.cloud.storage.exception.app.BadRequestException;
-import com.kii.cloud.storage.exception.app.ConflictException;
-import com.kii.cloud.storage.exception.app.ForbiddenException;
-import com.kii.cloud.storage.exception.app.NotFoundException;
-import com.kii.cloud.storage.exception.app.UnauthorizedException;
-import com.kii.cloud.storage.exception.app.UndefinedException;
 
 public class PlayList extends Observable {
 	private static final String ID_IN_BUCKET = "1402ec97-d210-4c19-9ecb-3fe04bba0083";
@@ -35,25 +28,7 @@ public class PlayList extends Observable {
 			protected Void doInBackground(Void... params) {
 				try {
 					user.pushSubscription().subscribeBucket(bucket);
-				} catch (BadRequestException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UnauthorizedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ForbiddenException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ConflictException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UndefinedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -69,17 +44,10 @@ public class PlayList extends Observable {
 		return instance;
 	}
 	
-	public void addLast (Song song) {
+	public void add (Song song) {
 		KiiUser user = KiiUser.getCurrentUser();
 		song.userName = user.getUsername();
 		list.add(song);
-		update();
-	}
-	
-	public void addFront (Song song) {
-		KiiUser user = KiiUser.getCurrentUser();
-		song.userName = user.getUsername();
-		list.add(0, song);
 		update();
 	}
 	
@@ -126,25 +94,7 @@ public class PlayList extends Observable {
 								array.optJSONObject(i).optString("userName"));
 						list.add(s);
 					}
-				} catch (BadRequestException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UnauthorizedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ForbiddenException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ConflictException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UndefinedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -199,25 +149,7 @@ public class PlayList extends Observable {
 				Log.d(TAG, "updating");
 				try {
 					object.save();
-				} catch (BadRequestException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ConflictException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ForbiddenException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UnauthorizedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UndefinedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

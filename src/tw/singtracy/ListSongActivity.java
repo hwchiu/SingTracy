@@ -27,7 +27,7 @@ import com.kii.cloud.storage.query.KiiQuery;
 import com.kii.cloud.storage.query.KiiQueryResult;
 
 public class ListSongActivity extends Activity {
-	private static final String TAG = "ListSongActivity";
+//	private static final String TAG = "ListSongActivity";
 	ListView lv;
 	private SongsAdapter adapter;
 	
@@ -82,7 +82,7 @@ public class ListSongActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Song s = (Song) lv.getItemAtPosition(position);
-				PlayList.getInstance().addLast(s);
+				PlayList.getInstance().add(s);
 				Toast.makeText(getApplicationContext(), "Added into queue", Toast.LENGTH_LONG).show();
 			}
 		});
