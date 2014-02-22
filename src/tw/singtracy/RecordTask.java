@@ -18,12 +18,12 @@ public class RecordTask extends AsyncTask<Void, Void, Void> {
 		Log.d("RecordTask", "doInBackground");
 		recorder = new MediaRecorder();
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
 		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		// recorder.setOutputFile(file);
 		try {
 			senderSocket = new Socket();
-			senderSocket.connect(new InetSocketAddress(InetAddress.getByName("140.113.235.134"), 8888), 2000);
+			senderSocket.connect(new InetSocketAddress(InetAddress.getByName("140.113.214.87"), 8888), 2000);
 			ParcelFileDescriptor pfd = ParcelFileDescriptor.fromSocket(senderSocket);
 		
 			recorder.setOutputFile(pfd.getFileDescriptor());
