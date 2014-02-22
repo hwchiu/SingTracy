@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class MainActivity extends Activity {
+	private static final String TAG = "MainActivity";
 	private static final int RESULTCODE_ACCESS_TOKEN = 1;
 	private SharedPreferences pref;
 
@@ -21,9 +23,9 @@ public class MainActivity extends Activity {
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		String token = pref.getString("access_token", null);
 		
-		//if(token == null)
-			//startActivityForResult(new Intent(this, LoginActivity.class), RESULTCODE_ACCESS_TOKEN);
-		startActivity(new Intent(this, AudioActivity.class));
+		if(token == null)
+			startActivityForResult(new Intent(this, LoginActivity.class), RESULTCODE_ACCESS_TOKEN);
+		
 		setContentView(R.layout.activity_main);
 		
 		findViewById(R.id.btn_songs).setOnClickListener(new OnClickListener() {
@@ -43,7 +45,8 @@ public class MainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == RESULTCODE_ACCESS_TOKEN){
 			String token = data.getStringExtra("token");
-			pref.edit().putString("token", token).commit();
+			Log.v(TAG, "got token: " + token);
+			pref.edit().putString("access_token", token).commit();
 		}
 	}
 
