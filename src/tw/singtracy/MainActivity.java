@@ -1,8 +1,21 @@
 package tw.singtracy;
 
+import java.io.IOException;
+
+import com.kii.cloud.storage.KiiUser;
+import com.kii.cloud.storage.exception.app.BadRequestException;
+import com.kii.cloud.storage.exception.app.ConflictException;
+import com.kii.cloud.storage.exception.app.ForbiddenException;
+import com.kii.cloud.storage.exception.app.NotFoundException;
+import com.kii.cloud.storage.exception.app.UnauthorizedException;
+import com.kii.cloud.storage.exception.app.UndefinedException;
+
+import tw.singtracy.utils.GCMRegisterHelper;
+import tw.singtracy.utils.PlayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -18,8 +31,6 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-				
-		
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		String token = pref.getString("access_token", null);
 		
@@ -40,6 +51,36 @@ public class MainActivity extends Activity {
 				startActivity(new Intent(getApplicationContext(), PlayListActivity.class));
 			}
 		});
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		pref = PreferenceManager.getDefaultSharedPreferences(this);
+		String token = pref.getString("access_token", null);
+		if (token != null) {
+			new LoginByTokenTask(){
+				protected void onPostExecute(Void result) {
+					PlayList.getInstance().refresh();
+					GCMRegisterHelper helper = new GCMRegisterHelper();
+					helper.initialize(getApplicationContext(), MainActivity.this);
+				}
+			}.execute();
+		}
+	}
+	
+	private class LoginByTokenTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
+			pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+			String token = pref.getString("access_token", null);
+			try {
+				KiiUser.loginWithToken(token);
+			} catch (Exception e) {
+				
+			}
+			return null;
+		}
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

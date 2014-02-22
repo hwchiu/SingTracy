@@ -7,21 +7,23 @@
 
     <EditText
         android:id="@+id/username"
-        android:inputType="text"
-        android:text="admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10" >
+        android:ems="10"
+        android:inputType="text"
+        android:text="ensky" >
+
         <requestFocus />
     </EditText>
     
 	<EditText
-        android:id="@+id/password"
-        android:inputType="textPassword"
-        android:text="admin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10" >
+	    android:id="@+id/password"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:ems="10"
+	    android:inputType="textPassword"
+	    android:text="ensky" >
+
     </EditText>
 
 	<Button android:id="@+id/login"
