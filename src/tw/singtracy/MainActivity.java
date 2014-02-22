@@ -1,24 +1,20 @@
 package tw.singtracy;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
@@ -107,56 +103,33 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	private MediaRecorder recorder;
 	private boolean isRecording = false;
-	private Socket senderSocket;
+	private RecordTask task;
 	
 	public void record(View view) throws IOException{
 		if(!this.isRecording) {
-			this.startRecording(Environment.getExternalStorageDirectory().toString() + "/haha.3gpp");
+			this.startRecording();
 		}
 		else {
 			this.stopRecording();
 		}
 	}
 	
-	protected void startRecording(String file) throws IOException{
+	protected void startRecording() {
 		if(!this.isRecording) {
-			recorder = new MediaRecorder();
-			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-			// recorder.setOutputFile(file);
-			senderSocket = new Socket("127.0.0.1", 8888);
-			ParcelFileDescriptor pfd = ParcelFileDescriptor.fromSocket(senderSocket);
-			
-			recorder.setOutputFile(pfd.getFileDescriptor());
-			try {
-				recorder.prepare();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			task = new RecordTask();
 			this.isRecording = true;
-			recorder.start();
+			((Button) findViewById(R.id.record)).setText("Stop");
+			task.execute();
 		}
 	}
 	
 	protected void stopRecording(){
 		if(this.isRecording) {
 			this.isRecording = false;
-			try{
-				recorder.stop();
-			    recorder.release(); 
-			    this.senderSocket.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			((Button) findViewById(R.id.record)).setText("Record");
+			task.stop();
+			task.cancel(true);
 		}
 	}	
 
