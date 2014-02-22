@@ -2,6 +2,8 @@ package tw.singtracy;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Observable;
+import java.util.Observer;
 
 import tw.singtracy.utils.GCMRegisterHelper;
 import tw.singtracy.utils.PlayList;
@@ -21,10 +23,11 @@ import android.view.Menu;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.kii.cloud.storage.KiiUser;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Observer {
 	private static final String TAG = "MainActivity";
 	private static final int RESULTCODE_ACCESS_TOKEN = 1;
 	private SharedPreferences pref;
@@ -63,7 +66,6 @@ public class MainActivity extends Activity {
 				playURL("https://api-jp.kii.com/api/x/bkfkd9gkwwc4cdupfn4qkz221");
 			}
 		});
-		
 	}
 	
 	@Override
@@ -74,6 +76,7 @@ public class MainActivity extends Activity {
 		if (token != null) {
 			new LoginByTokenTask(){
 				protected void onPostExecute(Void result) {
+					PlayList.getInstance().addObserver(MainActivity.this);
 					PlayList.getInstance().refresh();
 					GCMRegisterHelper helper = new GCMRegisterHelper();
 					helper.initialize(getApplicationContext(), MainActivity.this);
@@ -190,6 +193,17 @@ public class MainActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
-	}	
+	}
 
+	@Override
+	public void update(Observable observable, Object isMyTurn) {
+		if (observable instanceof PlayList) {
+			Boolean myturn = (Boolean) isMyTurn;
+			if (myturn) {
+				Toast.makeText(getApplicationContext(), "myTurn", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(getApplicationContext(), "notMyTurn", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
 }

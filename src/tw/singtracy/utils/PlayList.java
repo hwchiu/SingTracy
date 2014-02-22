@@ -26,6 +26,7 @@ public class PlayList extends Observable {
 	protected static final String TAG = "PlayList";
 	private ArrayList<Song> list = null;
 	private static PlayList instance = null;
+	private String lastSong = null; 
 	
 	private PlayList () {
 		final KiiUser user = KiiUser.getCurrentUser();
@@ -151,9 +152,26 @@ public class PlayList extends Observable {
 			}
 			
 			protected void onPostExecute(Void result) {
-				PlayList.this.notifyObservers();
+				notifyObservers(itsMyTurn());
+				lastSong = nowPlayingKey();
 			}
 		}.execute();
+	}
+	
+	public Song nowPlaying () {
+		return list.size() == 0 ? null : list.get(0);
+	}
+	
+	public String nowPlayingKey () {
+		return nowPlaying() == null ? null : nowPlaying().key;
+	}
+	
+	protected boolean queueChanged () {
+		return lastSong != nowPlayingKey(); 
+	}
+	
+	public boolean itsMyTurn () {
+		return nowPlaying() != null && nowPlaying().userName.equals(KiiUser.getCurrentUser().getUsername());
 	}
 
 	public void delete(int position) {
@@ -205,8 +223,9 @@ public class PlayList extends Observable {
 				}
 				return null;
 			}
+			
 			protected void onPostExecute(Void result) {
-				notifyObservers();
+				//notifyObservers();
 			}
 		}.execute();
 	}
