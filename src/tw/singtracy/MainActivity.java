@@ -202,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 	private boolean isRecording = false;
 	private RecordTask task;
 	
-	protected void record(View view) throws IOException{
+	public void record(View view) {
 		if(!this.isRecording) {
 			this.startRecording();
 		}
@@ -213,10 +213,9 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 	
 	protected void startRecording() {
 		if(!this.isRecording) {
-
 			task = new RecordTask();
-			this.isRecording = true;
 			((Button) findViewById(R.id.record)).setText("Stop");
+			this.isRecording = true;
 			task.execute();
 		}
 	}
@@ -224,8 +223,8 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 	protected void stopRecording(){
 		if(this.isRecording) {
 			((Button) findViewById(R.id.record)).setText("Record");
+			this.isRecording = false;
 			task.stop();
-			task.cancel(true);
 		}
 	}
 
