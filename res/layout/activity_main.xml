@@ -12,14 +12,6 @@
         android:layout_marginRight="54dp"
         android:text="Songs" />
 
-    <Button
-        android:id="@+id/btn_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/btn_songs"
-        android:text="PlayList" />
-
     <SurfaceView
         android:id="@+id/playback_surface"
         android:layout_width="fill_parent" 
@@ -35,5 +27,30 @@
         android:layout_alignParentTop="true"
         android:onClick="record"
         android:text="Record" />
+
+    <Button
+        android:id="@+id/btn_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="74dp"
+        android:layout_toLeftOf="@+id/record"
+        android:text="PlayList" />
+
+    <Button
+        android:id="@+id/btn_votedown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_playlist"
+        android:layout_alignParentBottom="true"
+        android:text="-" />
+
+    <Button
+        android:id="@+id/btn_voteup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/record"
+        android:text="+" />
  
 </RelativeLayout>

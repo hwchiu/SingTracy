@@ -49,63 +49,9 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 			Log.v(TAG, "Use token: " + token);
 
 		setContentView(R.layout.activity_main);
-		((SurfaceView)findViewById(R.id.playback_surface)).getHolder().addCallback(new SurfaceHolder.Callback() {
-			
-			@Override
-			public void surfaceDestroyed(SurfaceHolder holder) {
-			}
-			
-			@Override
-			public void surfaceCreated(SurfaceHolder holder) {
-				mp.setDisplay(holder);
-			}
-			
-			@Override
-			public void surfaceChanged(SurfaceHolder holder, int format, int width,
-					int height) {
-			}
-		});
-		
-		bar = getSupportActionBar();
-		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-	    bar.setDisplayShowTitleEnabled(true);
-	    bar.setDisplayShowHomeEnabled(true);
-	    
-	    ActionBar.Tab newTab0 = bar.newTab();
-    	newTab0.setText("Tab 0 title");
-    	newTab0.setTabListener(this);
-    	ActionBar.Tab newTab1 = bar.newTab();
-    	newTab1.setText("Tab 1 title");
-    	newTab1.setTabListener(this);
-    	
-    	bar.addTab(newTab0);
-    	bar.addTab(newTab1);    	
-		
-		findViewById(R.id.btn_songs).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startActivity(new Intent(getApplicationContext(), ListSongActivity.class));
-			}
-		});
-		findViewById(R.id.btn_playlist).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startActivity(new Intent(getApplicationContext(), PlayListActivity.class));
-			}
-		});
-		
-
-		findViewById(R.id.playback_surface).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// mute or unmute
-				muted = !muted;
-				float vol = muted? 0f : 0.5f;
-				mp.setVolume(vol, vol);
-			}
-		});
+		layoutSettings();
+		setListeners();
 	}
-	
 	
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 	            Log.d("SimpleActionBarTabsActivity","tab " 
@@ -169,13 +115,13 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 		return true;
 	}
 	
-	public void playURL(String url){
-
+	private void playURL (String url) {
 		try {
 			mp.setDataSource(url);
 			mp.setOnPreparedListener(new OnPreparedListener() {
 				@Override
 				public void onPrepared(MediaPlayer mp) {
+					startRecording();
 					mp.start();
 				}
 			});
@@ -196,10 +142,67 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 		
 	}
 	
+	private void layoutSettings() {
+		bar = getSupportActionBar();
+		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	    bar.setDisplayShowTitleEnabled(true);
+	    bar.setDisplayShowHomeEnabled(true);
+	    
+	    ActionBar.Tab newTab0 = bar.newTab();
+    	newTab0.setText("Tab 0 title");
+    	newTab0.setTabListener(this);
+    	ActionBar.Tab newTab1 = bar.newTab();
+    	newTab1.setText("Tab 1 title");
+    	newTab1.setTabListener(this);
+    	
+    	bar.addTab(newTab0);
+    	bar.addTab(newTab1);    
+	}
+	
+	private void setListeners() {
+		findViewById(R.id.btn_songs).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(getApplicationContext(), ListSongActivity.class));
+			}
+		});
+		findViewById(R.id.btn_playlist).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(getApplicationContext(), PlayListActivity.class));
+			}
+		});
+
+		findViewById(R.id.playback_surface).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// mute or unmute
+				muted = !muted;
+				float vol = muted? 0f : 0.5f;
+				mp.setVolume(vol, vol);
+			}
+		});
+		((SurfaceView)findViewById(R.id.playback_surface)).getHolder().addCallback(new SurfaceHolder.Callback() {	
+			@Override
+			public void surfaceDestroyed(SurfaceHolder holder) {
+			}
+			
+			@Override
+			public void surfaceCreated(SurfaceHolder holder) {
+				mp.setDisplay(holder);
+			}
+			
+			@Override
+			public void surfaceChanged(SurfaceHolder holder, int format, int width,
+					int height) {
+			}
+		});
+	}
+	
 	private boolean isRecording = false;
 	private RecordTask task;
 	
-	public void record(View view) throws IOException{
+	protected void record(View view) throws IOException{
 		if(!this.isRecording) {
 			this.startRecording();
 		}
