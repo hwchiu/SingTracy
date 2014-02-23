@@ -1,11 +1,16 @@
 package tw.singtracy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import tw.singtracy.utils.GCMRegisterHelper;
 import tw.singtracy.utils.PlayList;
+import tw.singtracy.utils.Voter;
+import tw.singtracy.utils.Voter.Vote;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -24,9 +29,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
 import com.kii.cloud.storage.KiiUser;
 
 public class MainActivity extends ActionBarActivity implements Observer,TabListener {
@@ -81,6 +92,10 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 					PlayList.getInstance().refresh();
 					GCMRegisterHelper helper = new GCMRegisterHelper();
 					helper.initialize(getApplicationContext(), MainActivity.this);
+
+					Voter.getInstance().addObserver(MainActivity.this);
+					Voter.getInstance().initAfterSignedIn();
+					initializeGraph();
 				}
 			}.execute();
 		}
@@ -166,13 +181,14 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 				startActivity(new Intent(getApplicationContext(), ListSongActivity.class));
 			}
 		});
+		
 		findViewById(R.id.btn_playlist).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(getApplicationContext(), PlayListActivity.class));
 			}
 		});
-
+		
 		findViewById(R.id.playback_surface).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -182,6 +198,29 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 				mp.setVolume(vol, vol);
 			}
 		});
+
+		findViewById(R.id.btn_votedown).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Voter.getInstance().voteDown();
+			}
+		});
+
+		findViewById(R.id.btn_voteup).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Voter.getInstance().voteUp();
+			}
+		});
+		
+		((Button)findViewById(R.id.btn_voteup)).setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View arg0) {
+				Voter.getInstance().clearVotes();
+				return true;
+			}
+		});
+		
 		((SurfaceView)findViewById(R.id.playback_surface)).getHolder().addCallback(new SurfaceHolder.Callback() {	
 			@Override
 			public void surfaceDestroyed(SurfaceHolder holder) {
@@ -228,6 +267,53 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 			task.cancel(true);
 		}
 	}
+	
+	private void initializeGraph () {
+		Timer autoUpdate = new Timer();
+        autoUpdate.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                    	Voter.getInstance().refresh();
+                    }
+                });
+            }
+        }, 0, 2 * 1000);
+		
+	}
+	
+	private void refreshGraph () {
+		ArrayList<Vote> votes = Voter.getInstance().getVotes();
+		if (votes.size() > 0) {
+			GraphViewData[] datas = new GraphViewData[votes.size()];
+				int i = 0;
+				int now = (int)(new java.util.Date().getTime() / 1000), 
+					lasttimestamp = votes.get(0).timestamp - now;
+				for (Vote v : votes) {
+					int vTimestamp = v.timestamp;
+					Log.d(TAG, "V.timestamp: " + vTimestamp + ", now: " + now);
+					vTimestamp -= now;
+					Log.d(TAG, "vV.timestamp: " + vTimestamp);
+					datas[i] = new GraphViewData(vTimestamp, v.score);
+					lasttimestamp = vTimestamp;
+					i++;
+				}
+			GraphViewSeries exampleSeries = new GraphViewSeries(datas);
+	
+			GraphView graphView = new LineGraphView(
+			      MainActivity.this // context
+			      , "投票結果" // heading
+			);
+			graphView.addSeries(exampleSeries); // data
+			graphView.setViewPort(lasttimestamp - 30, 30);
+			graphView.setScrollable(true);
+			
+			LinearLayout layout = (LinearLayout) findViewById(R.id.graph1);
+			layout.removeAllViewsInLayout();
+			layout.addView(graphView);
+		}
+	}
 
 	@Override
 	public void update(Observable observable, Object isMyTurn) {
@@ -240,6 +326,8 @@ public class MainActivity extends ActionBarActivity implements Observer,TabListe
 			} else {
 				Toast.makeText(getApplicationContext(), "notMyTurn", Toast.LENGTH_SHORT).show();
 			}
+		} else if (observable instanceof Voter) {
+			refreshGraph();
 		}
 	}
 }

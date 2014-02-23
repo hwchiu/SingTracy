@@ -3,22 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <SurfaceView
+            android:id="@+id/playback_surface"
+            android:layout_width="fill_parent"
+            android:layout_height="350dip" />
+
+        <LinearLayout
+            android:id="@+id/graph1"
+            android:layout_width="fill_parent"
+            android:layout_height="100dip"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/btn_songs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/textView1"
         android:layout_marginRight="54dp"
         android:text="Songs" />
-
-    <SurfaceView
-        android:id="@+id/playback_surface"
-        android:layout_width="fill_parent" 
-        android:layout_height="400dip"
-        android:layout_centerInParent="true"
-    />
-
+    
     <Button
         android:id="@+id/record"
         android:layout_width="wrap_content"

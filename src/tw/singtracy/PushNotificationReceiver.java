@@ -1,6 +1,7 @@
 package tw.singtracy;
 
 import tw.singtracy.utils.PlayList;
+import tw.singtracy.utils.Voter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -64,7 +65,10 @@ public class PushNotificationReceiver extends BroadcastReceiver {
 		if (pam.containsKiiObject()) {
 			KiiObject obj = pam.getKiiObject();
 			Log.d(TAG, obj.toString());
-			PlayList.getInstance().refresh();
+			if (bucket.equals("PlayList"))
+				PlayList.getInstance().refresh();
+			//else
+			//	Voter.getInstance().refresh();
 		}
 	}
 
